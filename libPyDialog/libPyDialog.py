@@ -262,7 +262,7 @@ class libPyDialog:
 		while True:
 			code_inputbox, tag_inputbox = self.__diag.inputbox(text = text, height = height, width = width, init = init)
 			if code_inputbox == self.__diag.OK:
-				if(not self.__utils.validateRegularExpression(regular_expresion_to_name_folder_or_file, tag_inputbox)):
+				if(not self.__utils.validateDataWithRegularExpression(regular_expresion_to_name_folder_or_file, tag_inputbox)):
 					self.createMessageDialog("\nInvalid data entered. Required data (File or directory name).", 8, 50, "Error Message")
 				else:
 					return tag_inputbox
