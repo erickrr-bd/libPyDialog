@@ -315,6 +315,28 @@ class libPyDialog:
 			elif code_fselect == self.__diag.CANCEL:
 				self.__action_to_cancel()
 
+
+	def createFolderDialog(self, filepath, height, width, title):
+		"""
+		Method that creates a directory or folder selection dialog box.
+		
+		Return the path chosen by the user (the last element of which may be a directory or a file).
+
+		:arg filepath: Initial path.
+		:arg height: Height of the box.
+		:arg width: Width of the box.
+		:arg title: Title to display in the box.
+		"""
+		while True:
+			code_dselect, tag_dselect = self.__diag.dselect(filepath = filepath, height = height, width = width, title = title)
+			if code_dselect == self.__diag.OK:
+				if tag_dselect == "":
+					self.createMessageDialog("\nSelect a directory. Required value (not empty).", 7, 50, "Error Message")
+				else:
+					return tag_dselect
+			elif code_dselect == self.__diag.CANCEL:
+				self.__action_to_cancel()
+
 	
 	def createFormDialog(self, text, elements, height, width, title):
 		"""
