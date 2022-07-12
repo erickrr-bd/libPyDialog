@@ -24,8 +24,8 @@ class libPyDialog:
 		"""
 		Method that corresponds to the constructor of the class.
 
-		:arg background_title: Title to display in the background of the box.
-		:action_to_cancel: Method to be called when the user chooses the cancel option.
+		:arg background_title (string): Title to display in the background of the box.
+		:action_to_cancel (object): Method to be called when the user chooses the cancel option.
 		"""
 		self.__utils = libPyUtils()
 		self.__diag = Dialog(dialog = "dialog")
@@ -39,11 +39,11 @@ class libPyDialog:
 
 		Return the tag string that corresponding to the item that the user chose. Returns zero if the cancel option is chosen.
 
-		:arg text: Text to display in the box.
-		:arg height: Height of the box.
-		:arg width: Width of the box.
-		:arg choices: Tuple with the menu options.	
-		:arg title: Title to display in the box.
+		:arg text (string): Text to display in the box.
+		:arg height (integer): Height of the box.
+		:arg width (integer): Width of the box.
+		:arg choices (tuple): Tuple with the menu options.	
+		:arg title (string): Title to display in the box.
 		"""
 		code_menu, tag_menu = self.__diag.menu(text = text, height = height, width = width, menu_height = len(choices), choices = choices, title = title)
 		if code_menu == self.__diag.OK:
@@ -56,10 +56,10 @@ class libPyDialog:
 		"""
 		Method to create a dialog of type Message.
 
-		:arg text: Text to display in the box.
-		:arg height: Height of the box.
-		:arg width: Width of the box.
-		:arg title: Title to display in the box.
+		:arg text (string): Text to display in the box.
+		:arg height (integer): Height of the box.
+		:arg width (integer): Width of the box.
+		:arg title (string): Title to display in the box.
 		"""
 		self.__diag.msgbox(text = text, height = height, width = width, title = title)
 
@@ -70,11 +70,11 @@ class libPyDialog:
 
 		Return the tag string that corresponding to the entry that was chosen by the user.
 
-		:arg text: Text to display in the box.
-		:arg height: Height of the box.
-		:arg width: Width of the box.
-		:arg choices: An iterable of (tag, item, status) tuples where status specifies the initial selected/unselected state of each entry; can be True or False, 1 or 0, "on" or "off" (True, 1 and "on" meaning selected), or any case variation of these two strings. No more than one entry should be set to True.
-		:arg title: Title to display in the box.
+		:arg text (string): Text to display in the box.
+		:arg height (integer): Height of the box.
+		:arg width (integer): Width of the box.
+		:arg choices (tuple): An iterable of (tag, item, status) tuples where status specifies the initial selected/unselected state of each entry; can be True or False, 1 or 0, "on" or "off" (True, 1 and "on" meaning selected), or any case variation of these two strings. No more than one entry should be set to True.
+		:arg title (string): Title to display in the box.
 		"""
 		while True:
 			code_radiolist, tag_radiolist = self.__diag.radiolist(text = text, height = height ,width = width, list_height = len(choices), choices = choices, title = title)
@@ -93,11 +93,11 @@ class libPyDialog:
 
 		Return a tuple of the form (code, [tag, ...]) whose first element is a Dialog exit code and second element lists all tags for the entries selected by the user.
 		
-		:arg text: Text to display in the box.
-		:arg height: Height of the box.
-		:arg width: Width of the box.
-		:arg choices: An iterable of (tag, item, status) tuples where status specifies the initial selected/unselected state of each entry; can be True or False, 1 or 0, "on" or "off" (True, 1 and "on" meaning selected), or any case variation of these two strings.
-		:arg title: Title to display in the box.
+		:arg text (string): Text to display in the box.
+		:arg height (integer): Height of the box.
+		:arg width (integer): Width of the box.
+		:arg choices (tuple): An iterable of (tag, item, status) tuples where status specifies the initial selected/unselected state of each entry; can be True or False, 1 or 0, "on" or "off" (True, 1 and "on" meaning selected), or any case variation of these two strings.
+		:arg title (string): Title to display in the box.
 		"""
 		while True:
 			code_checklist, tag_checklist = self.__diag.checklist(text = text, height = height, width = width, list_height = len(choices), choices = choices, title = title)
@@ -116,10 +116,10 @@ class libPyDialog:
 
 		Return the string entered by the user.
 	
-		:arg text: Text to display in the box.
-		:arg height: Height of the box.
-		:arg width: Width of the box.
-		:arg init: Default input string.
+		:arg text (string): Text to display in the box.
+		:arg height (integer): Height of the box.
+		:arg width (integer): Width of the box.
+		:arg init (string): Default input string.
 		"""
 		while True:
 			code_inputbox, tag_inputbox = self.__diag.inputbox(text = text, height = height, width = width, init = init)
@@ -138,11 +138,11 @@ class libPyDialog:
 
 		Return the password entered by the user.
 	
-		:arg text: Text to display in the box.
-		:arg height: Height of the box.
-		:arg width: Width of the box.
-		:arg init: Default input string.
-		:arg insecure: If the value is True, the entered password is displayed with the character *. Otherwise the password does not appear.
+		:arg text (string): Text to display in the box.
+		:arg height (integer): Height of the box.
+		:arg width (integer): Width of the box.
+		:arg init (string): Default input string.
+		:arg insecure (boolean): If the value is True, the entered password is displayed with the character *. Otherwise the password does not appear.
 		"""
 		while True:
 			code_passwordbox, tag_passwordbox = self.__diag.passwordbox(text = text, height = height, width = width, init = init, insecure = insecure)
@@ -161,10 +161,10 @@ class libPyDialog:
 
 		Return the string (Integer value) entered by the user.
 
-		:arg text: Text to display in the box.
-		:arg height: Height of the box.
-		:arg width: Width of the box.
-		:arg init: Default input string.
+		:arg text (string): Text to display in the box.
+		:arg height (integer): Height of the box.
+		:arg width (integer): Width of the box.
+		:arg init (string): Default input string.
 		"""
 		regular_expresion_to_number = re_compile(r'^\d+$')
 		while True:
@@ -184,10 +184,10 @@ class libPyDialog:
 
 		Return the string (Decimal value) entered by the user.
 
-		text -- Text to display in the box.
-		height -- Height of the box.
-		width -- Width of the box.
-		init -- Default input string.
+		:arg text (string): Text to display in the box.
+		:arg height (integer): Height of the box.
+		:arg width (integer): Width of the box.
+		:arg init (string): Default input string.
 		"""
 		regular_expresion_to_decimal = re_compile(r'^[1-9](\.[0-9]+)?$')
 		while True:
@@ -207,10 +207,10 @@ class libPyDialog:
 
 		Return the string (IP address) entered by the user.
 
-		text -- Text to display in the box.
-		height -- Height of the box.
-		width -- Width of the box.
-		init -- Default input string.
+		:arg text (string): Text to display in the box.
+		:arg height (integer): Height of the box.
+		:arg width (integer): Width of the box.
+		:arg init (string): Default input string.
 		"""
 		regular_expresion_to_ip = re_compile(r'^(?:(?:[1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}(?:[1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^localhost$')
 		while True:
@@ -230,10 +230,10 @@ class libPyDialog:
 		
 		Return the string (Port) entered by the user.
 
-		:arg text: Text to display in the box.
-		:arg height: Height of the box.
-		:arg width: Width of the box.
-		:arg init: Default input string.
+		:arg text (string): Text to display in the box.
+		:arg height (integer): Height of the box.
+		:arg width (integer): Width of the box.
+		:arg init (string): Default input string.
 		"""
 		regular_expresion_to_port = re_compile(r'^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$')
 		while True:
@@ -253,10 +253,10 @@ class libPyDialog:
 		
 		Return the string (Folder or file name) entered by the user.
 
-		:arg text: Text to display in the box.
-		:arg height: Height of the box.
-		:arg width: Width of the box.
-		:arg init: Default input string.
+		:arg text (string): Text to display in the box.
+		:arg height (integer): Height of the box.
+		:arg width (integer): Width of the box.
+		:arg init (string): Default input string.
 		"""
 		regular_expresion_to_name_folder_or_file = re_compile(r'^[^\\/?%*:|"<>]+$')
 		while True:
@@ -276,11 +276,11 @@ class libPyDialog:
 		
 		Return a list of the form [hour, minute, second], where hour, minute and second are integers corresponding to the time chosen by the user.
 
-		:arg text: Text to display in the box.
-		:arg height: Height of the box.
-		:arg width: Width of the box.
-		:arg hour: Inititial hour selected.
-		:arg minute: inititial minute selected.
+		:arg text (string): Text to display in the box.
+		:arg height (integer): Height of the box.
+		:arg width (integer): Width of the box.
+		:arg hour (integer): Inititial hour selected.
+		:arg minute (integer): inititial minute selected.
 		"""
 		code_timebox, tag_timebox = self.__diag.timebox(text = text, height = height, width = width, hour = hour, minute = minute, second = 00)
 		if code_timebox == self.__diag.OK:
@@ -295,11 +295,11 @@ class libPyDialog:
 		
 		Return the path chosen by the user (the last element of which may be a directory or a file).
 
-		:arg filepath: Initial path.
-		:arg height: Height of the box.
-		:arg width: Width of the box.
-		:arg title: Title to display in the box.
-		:arg extension_file: Allowed file extension.
+		:arg filepath (string): Initial path.
+		:arg height (integer): Height of the box.
+		:arg width (integer): Width of the box.
+		:arg title (string): Title to display in the box.
+		:arg extension_file (string): Allowed file extension.
 		"""
 		while True:
 			code_fselect, tag_fselect = self.__diag.fselect(filepath = filepath, height = height, width = width, title = title)
@@ -322,10 +322,10 @@ class libPyDialog:
 		
 		Return the path chosen by the user (the last element of which may be a directory or a file).
 
-		:arg filepath: Initial path.
-		:arg height: Height of the box.
-		:arg width: Width of the box.
-		:arg title: Title to display in the box.
+		:arg filepath (string): Initial path.
+		:arg height (integer): Height of the box.
+		:arg width (integer): Width of the box.
+		:arg title (string): Title to display in the box.
 		"""
 		while True:
 			code_dselect, tag_dselect = self.__diag.dselect(filepath = filepath, height = height, width = width, title = title)
@@ -344,11 +344,11 @@ class libPyDialog:
 		
 		Return a list that gives the contents of every editable field on exit, with the same order as in elements.
 
-		:arg text: Text to display in the box.
-		:arg elements: sequence describing the labels and fields.
-		:arg height: Height of the box.
-		:arg width: Width of the box.
-		:arg title: Title to display in the box.
+		:arg text (string): Text to display in the box.
+		:arg elements (tuple): Sequence describing the labels and fields.
+		:arg height (integer): Height of the box.
+		:arg width (integer): Width of the box.
+		:arg title (string): Title to display in the box.
 		"""
 		while True:
 			code_form, tag_form = self.__diag.form(text = text, elements = elements, height = height, width = width, form_height = len(elements), title = title)
@@ -367,10 +367,10 @@ class libPyDialog:
 		
 		Return a Dialog exit code.
 
-		:arg text: Text to display in the box.
-		:arg height: Height of the box.
-		:arg width: Width of the box.
-		:arg title: Title to display in the box.
+		:arg text (string): Text to display in the box.
+		:arg height (integer): Height of the box.
+		:arg width (integer): Width of the box.
+		:arg title (string): Title to display in the box.
 		"""
 		tag_yes_or_no = self.__diag.yesno(text = text, height = height, width = width, title = title)
 		return tag_yes_or_no
@@ -382,9 +382,9 @@ class libPyDialog:
 		
 		Return a Dialog exit code.
 
-		:arg text: Text to display in the box.
-		:arg height: Height of the box.
-		:arg width: Width of the box.
-		:arg title: Title to display in the box.
+		:arg text (string): Text to display in the box.
+		:arg height (integer): Height of the box.
+		:arg width (integer): Width of the box.
+		:arg title (string): Title to display in the box.
 		"""
 		code_scrollbox = self.__diag.scrollbox(text = text, height = height, width = width, title = title)
