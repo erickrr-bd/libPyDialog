@@ -1,24 +1,9 @@
-from pathlib import Path
+from os import path
 from dialog import Dialog
 from libPyUtils import libPyUtils
 from re import compile as re_compile
 
 class libPyDialog:
-	"""
-	Attribute that contains an object of the dialog module (pythondialog library).
-	"""
-	__diag = None
-
-	"""
-	Attribute that contains an object of the libPyUtils library.
-	"""
-	__utils = None
-
-	"""
-	Attribute that contains the reference to the method that will be called when the user chooses the cancel option in the interfaces.
-	"""
-	__action_to_cancel = None
-
 
 	def __init__(self, background_title, action_to_cancel):
 		"""
@@ -289,27 +274,29 @@ class libPyDialog:
 			self.__action_to_cancel()
 
 
-	def createFileDialog(self, filepath, height, width, title, extension_file):
+	def createFileDialog(self, filepath, height, width, title, required_file_extension):
 		"""
 		Method that creates a file selection dialog box.
 		
-		Return the path chosen by the user (the last element of which may be a directory or a file).
+		Return the path chosen by the user (the last element of which may be a folder or a file).
 
 		:arg filepath (string): Initial path.
 		:arg height (integer): Height of the box.
 		:arg width (integer): Width of the box.
 		:arg title (string): Title to display in the box.
-		:arg extension_file (string): Allowed file extension.
+		:arg required_file_extension (string): Allowed file extension.
 		"""
 		while True:
 			code_fselect, tag_fselect = self.__diag.fselect(filepath = filepath, height = height, width = width, title = title)
 			if code_fselect == self.__diag.OK:
 				if not tag_fselect:
-					self.createMessageDialog("\nSelect a file. Required value: " + extension_file + " file.", 7, 50, "Error Message")
+					self.createMessageDialog("\nSelect a file. Required value: " + required_file_extension + " file.", 7, 50, "Error Message")
+				elif not path.isfile(tag_fselect):
+					self.createMessageDialog("\nFile doesn't exist. Select a file.", 7, 50, "Error Message")
 				else:
-					ext_file = Path(tag_fselect).suffix
-					if not ext_file == extension_file:
-						self.createMessageDialog("\nSelect a file. Required value: " + extension_file + " file.", 7, 50, "Error Message")
+					file_extension = path.splitext(tag_fselect)[1]
+					if not file_extension == required_file_extension:
+						self.createMessageDialog("\nSelect an allowed file. Required value: " + required_file_extension + " file.", 7, 50, "Error Message")
 					else:
 						return tag_fselect
 			elif code_fselect == self.__diag.CANCEL:
@@ -318,9 +305,9 @@ class libPyDialog:
 
 	def createFolderDialog(self, filepath, height, width, title):
 		"""
-		Method that creates a directory or folder selection dialog box.
+		Method that creates a folder selection dialog box.
 		
-		Return the path chosen by the user (the last element of which may be a directory or a file).
+		Return the path chosen by the user (the last element of which may be a folder or a file).
 
 		:arg filepath (string): Initial path.
 		:arg height (integer): Height of the box.
