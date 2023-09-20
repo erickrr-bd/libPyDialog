@@ -2,7 +2,7 @@
 
 Easy creation of graphical interfaces using PythonDialog.
 
-For more inforation:
+For more information:
 
 [https://pythondialog.sourceforge.io/](https://pythondialog.sourceforge.io/)
 
