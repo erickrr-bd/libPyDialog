@@ -3,11 +3,11 @@ from setuptools import find_packages, setup
 
 HERE = Path(__file__).parent
 
-VERSION = '1.0'
+VERSION = '1.2'
 PACKAGE_NAME = 'libPyDialog' 
 AUTHOR = 'Erick Rodríguez'
 AUTHOR_EMAIL = 'erickrr.tbd93@gmail.com, erodriguez@tekium.mx' 
-URL = 'https://github.com/erickrr-bd/libPyDe' 
+URL = 'https://github.com/erickrr-bd/libPyDialog' 
 
 LICENSE = 'GPLv3' 
 DESCRIPTION = 'Library for the creation of graphical interfaces (using pythondialog) in an easy way.' 
@@ -16,7 +16,7 @@ LONG_DESC_TYPE = "text/markdown"
 
 INSTALL_REQUIRES = [
       'pythondialog',
-      'libPyU'
+      'libPyUtils'
       ]
 
 setup(
