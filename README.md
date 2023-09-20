@@ -1,41 +1,43 @@
-# libPyDialog
+# libPyDialog v1.2
 
-Author: Erick Rodríguez
+Easy creation of graphical interfaces using PythonDialog.
 
-Email: erickrr.tbd93@gmail.com, erodriguez@tekium.mx
+For more inforation:
 
-License: GPLv3
-
-Library that facilitates the creation of graphical interfaces for data input and/or output using dialog (pythondialog).
-
-It has customized interfaces for entering specific data (for example IP addresses, ports, decimal numbers, among others). It has validations, such as, for example, that in the radiolist or checklist at least select one option, avoid an empty inputbox, or with a value that is not valid, among others.
+[https://pythondialog.sourceforge.io/](https://pythondialog.sourceforge.io/)
 
 ## Interfaces
 - Menu box.
 - Message box.
 - Radiolist box.
 - Checklist box.
+- Input box.
+- Password box.
 - Time box.
 - File box.
-- Directory box.
+- Folder box.
 - Form box.
-- Yes or No Box.
+- Yes or No box.
 - Scroll box.
-- Inputbox.
-- Password box.
-- Inputbox for number integers.
-- Inputbox for decimal numbers.
-- Inputbox for IP addresses.
-- Inputbox for ports.
-- Inputbox for directory or file names.
+- Input box for number integers.
+- Input box for ports.
+- Input box for file or folder names.
 
 # Requirements
 - CentOS 8, Red Hat 8 or Rocky Linux 8
-- Dialog.
-- Python 3.6
+- Dialog
+- Python 3.9
 - Python Libraries
   - pythondialog
   - libPyUtils
+    
+# Installation
+
+Copy the "libPyDialog" folder to the following path:
+
+`/usr/local/lib/python3.9/site-packages`
+
+**NOTE:** The path may change depending on the version of Python.
 
 # Commercial Support
 ![Tekium](https://github.com/unmanarc/uAuditAnalyzer2/blob/master/art/tekium_slogo.jpeg)
@@ -47,4 +49,3 @@ Tekium is an active sponsor of the project, and provides commercial support in t
 For integration with other platforms such as the Elastic stack, SIEMs, managed security providers in-house solutions, or for any other requests for extending current functionality that you wish to see included in future versions, please contact us: info at tekium.mx
 
 For more information, go to: https://www.tekium.mx/
-
