@@ -5,24 +5,26 @@ from re import compile as re_compile
 
 class libPyDialog:
 
-	def __init__(self, background_title, action_to_cancel):
+	def __init__(self, background_title):
 		"""
-		Method that corresponds to the constructor of the class.
+		Class constructor.
 
 		:arg background_title (string): Title to display in the background of the box.
-		:action_to_cancel (object): Method to be called when the user chooses the cancel option.
 		"""
 		self.__utils = libPyUtils()
 		self.__diag = Dialog(dialog = "dialog")
+		self.integer_regex = re_compile(r'^\d+$')
 		self.__diag.set_background_title(background_title)
-		self.__action_to_cancel = action_to_cancel
+		self.file_folder_name_regex = re_compile(r'^[^\\/?%*:|"<>]+$')
+		self.port_number_regex = re_compile(r'^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$')
+		self.ip_address_regex = re_compile(r'^(?:(?:[1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}(?:[1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^localhost$')
 
 
 	def createMenuDialog(self, text, height, width, choices, title):
 		"""
-		Method that creates a dialog of type Menu. 
+		Method that creates a menu.
 
-		Return the tag string that corresponding to the item that the user chose. Returns zero if the cancel option is chosen.
+		Returns a string with the number of the chosen option.
 
 		:arg text (string): Text to display in the box.
 		:arg height (integer): Height of the box.
@@ -33,13 +35,13 @@ class libPyDialog:
 		code_menu, tag_menu = self.__diag.menu(text = text, height = height, width = width, menu_height = len(choices), choices = choices, title = title)
 		if code_menu == self.__diag.OK:
 			return tag_menu
-		if code_menu == self.__diag.CANCEL:
-			return 0
+		elif code_menu == self.__diag.CANCEL:
+			raise KeyboardInterrupt("Exit")
 
 
 	def createMessageDialog(self, text, height, width, title):
 		"""
-		Method to create a dialog of type Message.
+		Method that displays a message.
 
 		:arg text (string): Text to display in the box.
 		:arg height (integer): Height of the box.
@@ -51,9 +53,9 @@ class libPyDialog:
 
 	def createRadioListDialog(self, text, height, width, choices, title):
 		"""
-		Method that creates a dialog of type RadioList.
+		Method that creates a radiolist.
 
-		Return the tag string that corresponding to the entry that was chosen by the user.
+		Returns a string with the chosen option.
 
 		:arg text (string): Text to display in the box.
 		:arg height (integer): Height of the box.
@@ -69,14 +71,14 @@ class libPyDialog:
 				else:
 					return tag_radiolist
 			elif code_radiolist == self.__diag.CANCEL:
-				self.__action_to_cancel()
+				raise KeyboardInterrupt("Exit")
 
 
 	def createCheckListDialog(self, text, height, width, choices, title):
 		"""
-		Method that creates a dialog of type CheckList.
+		Method that creates a checklist.
 
-		Return a tuple of the form (code, [tag, ...]) whose first element is a Dialog exit code and second element lists all tags for the entries selected by the user.
+		Returns a tuple with the chosen options.
 		
 		:arg text (string): Text to display in the box.
 		:arg height (integer): Height of the box.
@@ -92,14 +94,14 @@ class libPyDialog:
 				else:
 					return tag_checklist
 			elif code_checklist == self.__diag.CANCEL:
-				self.__action_to_cancel()
+				raise KeyboardInterrupt("Exit")
 
 	
 	def createInputBoxDialog(self, text, height, width, init):
 		"""
-		Method that creates a dialog of type inputbox.
+		Method that creates an inputbox.
 
-		Return the string entered by the user.
+		Returns the string with the entered data.
 	
 		:arg text (string): Text to display in the box.
 		:arg height (integer): Height of the box.
@@ -114,14 +116,14 @@ class libPyDialog:
 				else:
 					return tag_inputbox
 			elif code_inputbox == self.__diag.CANCEL:
-				self.__action_to_cancel()
+				raise KeyboardInterrupt("Exit")
 
 
 	def createPasswordBoxDialog(self, text, height, width, init, insecure):
 		"""
-		Method that creates a dialog of type Password.
+		Method that creates an inputbox of type password.
 
-		Return the password entered by the user.
+		Returns a string with the password entered.
 	
 		:arg text (string): Text to display in the box.
 		:arg height (integer): Height of the box.
@@ -137,129 +139,80 @@ class libPyDialog:
 				else:
 					return tag_passwordbox
 			elif code_passwordbox == self.__diag.CANCEL:
-				self.__action_to_cancel()
+				raise KeyboardInterrupt("Exit")
 
 	
 	def createInputBoxToNumberDialog(self, text, height, width, init):
 		"""
-		Method that creates a dialog of type inputbox for integer numbers.
+		Method that creates an inputbox for entering integers.
 
-		Return the string (Integer value) entered by the user.
+		Returns a string with the entered number.
 
 		:arg text (string): Text to display in the box.
 		:arg height (integer): Height of the box.
 		:arg width (integer): Width of the box.
 		:arg init (string): Default input string.
 		"""
-		regular_expresion_to_number = re_compile(r'^\d+$')
 		while True:
 			code_inputbox, tag_inputbox = self.__diag.inputbox(text = text, height = height, width = width, init = init)
 			if code_inputbox == self.__diag.OK:
-				if(not self.__utils.validateDataWithRegularExpression(regular_expresion_to_number, tag_inputbox)):
+				if(not self.__utils.validateDataRegex(self.integer_regex, tag_inputbox)):
 					self.createMessageDialog("\nInvalid data entered. Required value (integer number).", 8, 50, "Error Message")
 				else:
 					return tag_inputbox
 			elif code_inputbox == self.__diag.CANCEL:
-				self.__action_to_cancel()
-
-	
-	def createInputBoxToDecimalDialog(self, text, height, width, init):
-		"""
-		Method that creates a dialog of type inputbox for decimal numbers.
-
-		Return the string (Decimal value) entered by the user.
-
-		:arg text (string): Text to display in the box.
-		:arg height (integer): Height of the box.
-		:arg width (integer): Width of the box.
-		:arg init (string): Default input string.
-		"""
-		regular_expresion_to_decimal = re_compile(r'^[1-9](\.[0-9]+)?$')
-		while True:
-			code_inputbox, tag_inputbox = self.__diag.inputbox(text = text, height = height, width = width, init = init)
-			if code_inputbox == self.__diag.OK:
-				if(not self.__utils.validateDataWithRegularExpression(regular_expresion_to_decimal, tag_inputbox)):
-					self.createMessageDialog("\nInvalid data entered. Required value (decimal or float).", 8, 50, "Error Message")
-				else:
-					return tag_inputbox
-			elif code_inputbox == self.__diag.CANCEL:
-				self.__action_to_cancel()
-
-
-	def createInputBoxToIPDialog(self, text, height, width, init):
-		"""
-		Method that creates a dialog of type inputbox for IP addresses.
-
-		Return the string (IP address) entered by the user.
-
-		:arg text (string): Text to display in the box.
-		:arg height (integer): Height of the box.
-		:arg width (integer): Width of the box.
-		:arg init (string): Default input string.
-		"""
-		regular_expresion_to_ip = re_compile(r'^(?:(?:[1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}(?:[1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^localhost$')
-		while True:
-			code_inputbox, tag_inputbox = self.__diag.inputbox(text = text, height = height, width = width, init = init)
-			if code_inputbox == self.__diag.OK:
-				if(not self.__utils.validateDataWithRegularExpression(regular_expresion_to_ip, tag_inputbox)):
-					self.createMessageDialog("\nInvalid data entered. Required value (IP address).", 8, 50, "Error Message")
-				else:
-					return tag_inputbox
-			elif code_inputbox == self.__diag.CANCEL:
-				self.__action_to_cancel()
+				raise KeyboardInterrupt("Exit")
 
 	
 	def createInputBoxToPortDialog(self, text, height, width, init):
 		"""
-		Method that creates a dialog of type inputbox for IP addresses.
+		Method that creates an inputbox for entering port numbers.
 		
-		Return the string (Port) entered by the user.
+		Returns a string with the entered port number.
 
 		:arg text (string): Text to display in the box.
 		:arg height (integer): Height of the box.
 		:arg width (integer): Width of the box.
 		:arg init (string): Default input string.
 		"""
-		regular_expresion_to_port = re_compile(r'^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$')
 		while True:
 			code_inputbox, tag_inputbox = self.__diag.inputbox(text = text, height = height, width = width, init = init)
 			if code_inputbox == self.__diag.OK:
-				if(not self.__utils.validateDataWithRegularExpression(regular_expresion_to_port, tag_inputbox)):
+				if(not self.__utils.validateDataRegex(self.port_number_regex, tag_inputbox)):
 					self.createMessageDialog("\nInvalid data entered. Required value (0 - 65535).", 8, 50, "Error Message")
 				else:
 					return tag_inputbox
 			elif code_inputbox == self.__diag.CANCEL:
-				self.__action_to_cancel()
+				raise KeyboardInterrupt("Exit")
 
 
 	def createFolderOrFileNameDialog(self, text, height, width, init):
 		"""
-		Method that creates a dialog of type inputbox for folder or file name.
+		Method that creates an inputbox to enter the name of a file or folder.
 		
-		Return the string (Folder or file name) entered by the user.
+		Returns a string with the name of the file or folder entered.
 
 		:arg text (string): Text to display in the box.
 		:arg height (integer): Height of the box.
 		:arg width (integer): Width of the box.
 		:arg init (string): Default input string.
 		"""
-		regular_expresion_to_name_folder_or_file = re_compile(r'^[^\\/?%*:|"<>]+$')
 		while True:
 			code_inputbox, tag_inputbox = self.__diag.inputbox(text = text, height = height, width = width, init = init)
 			if code_inputbox == self.__diag.OK:
-				if(not self.__utils.validateDataWithRegularExpression(regular_expresion_to_name_folder_or_file, tag_inputbox)):
-					self.createMessageDialog("\nInvalid data entered. Required data (File or directory name).", 8, 50, "Error Message")
+				if(not self.__utils.validateDataRegex(self.file_folder_name_regex, tag_inputbox)):
+					self.createMessageDialog("\nInvalid data entered. Required data (File or folder name).", 8, 50, "Error Message")
 				else:
 					return tag_inputbox
 			elif code_inputbox == self.__diag.CANCEL:
-				self.__action_to_cancel()
+				raise KeyboardInterrupt("Exit")
 
 
 	def createTimeDialog(self, text, height, width, hour, minute):
 		"""
-		Method that creates a time dialog box.
+		Method that creates a timebox.
 		
-		Return a list of the form [hour, minute, second], where hour, minute and second are integers corresponding to the time chosen by the user.
+		Returns a list with the chosen time.
 
 		:arg text (string): Text to display in the box.
 		:arg height (integer): Height of the box.
@@ -271,43 +224,43 @@ class libPyDialog:
 		if code_timebox == self.__diag.OK:
 			return tag_timebox
 		elif code_timebox == self.__diag.CANCEL:
-			self.__action_to_cancel()
+			raise KeyboardInterrupt("Exit")
 
 
-	def createFileDialog(self, filepath, height, width, title, required_file_extension):
+	def createFileDialog(self, filepath, height, width, title, allowed_file_extension):
 		"""
-		Method that creates a file selection dialog box.
+		Method that creates a file selection box.
 		
-		Return the path chosen by the user (the last element of which may be a folder or a file).
+		Returns a string with the chosen path.
 
 		:arg filepath (string): Initial path.
 		:arg height (integer): Height of the box.
 		:arg width (integer): Width of the box.
 		:arg title (string): Title to display in the box.
-		:arg required_file_extension (string): Allowed file extension.
+		:arg allowed_file_extension (string): Allowed file extension.
 		"""
 		while True:
 			code_fselect, tag_fselect = self.__diag.fselect(filepath = filepath, height = height, width = width, title = title)
 			if code_fselect == self.__diag.OK:
 				if not tag_fselect:
-					self.createMessageDialog("\nSelect a file. Required value: " + required_file_extension + " file.", 7, 50, "Error Message")
+					self.createMessageDialog("\nSelect a file. Required value: " + allowed_file_extension + " file.", 7, 50, "Error Message")
 				elif not path.isfile(tag_fselect):
 					self.createMessageDialog("\nFile doesn't exist. Select a file.", 7, 50, "Error Message")
 				else:
 					file_extension = path.splitext(tag_fselect)[1]
-					if not file_extension == required_file_extension:
-						self.createMessageDialog("\nSelect an allowed file. Required value: " + required_file_extension + " file.", 7, 50, "Error Message")
+					if not file_extension == allowed_file_extension:
+						self.createMessageDialog("\nSelect an allowed file. Required value: " + allowed_file_extension + " file.", 7, 50, "Error Message")
 					else:
 						return tag_fselect
 			elif code_fselect == self.__diag.CANCEL:
-				self.__action_to_cancel()
+				raise KeyboardInterrupt("Exit")
 
 
 	def createFolderDialog(self, filepath, height, width, title):
 		"""
-		Method that creates a folder selection dialog box.
+		Method that creates a folder selection box.
 		
-		Return the path chosen by the user (the last element of which may be a folder or a file).
+		Returns a string with the chosen path.
 
 		:arg filepath (string): Initial path.
 		:arg height (integer): Height of the box.
@@ -318,56 +271,70 @@ class libPyDialog:
 			code_dselect, tag_dselect = self.__diag.dselect(filepath = filepath, height = height, width = width, title = title)
 			if code_dselect == self.__diag.OK:
 				if tag_dselect == "":
-					self.createMessageDialog("\nSelect a directory. Required value (not empty).", 7, 50, "Error Message")
+					self.createMessageDialog("\nSelect a folder. Required value (not empty).", 7, 50, "Error Message")
 				else:
 					return tag_dselect
 			elif code_dselect == self.__diag.CANCEL:
-				self.__action_to_cancel()
+				raise KeyboardInterrupt("Exit")
 
 	
-	def createFormDialog(self, text, elements, height, width, title):
+	def createFormDialog(self, text, elements, height, width, title, is_data_validated, **kwargs):
 		"""
-		Method that creates a form consisting of labels and fields.
+		Method that creates a form.
 		
-		Return a list that gives the contents of every editable field on exit, with the same order as in elements.
+		Returns a list with the entered data.
 
 		:arg text (string): Text to display in the box.
 		:arg elements (tuple): Sequence describing the labels and fields.
 		:arg height (integer): Height of the box.
 		:arg width (integer): Width of the box.
 		:arg title (string): Title to display in the box.
+		:arg is_data_validated (boolean): If the data entered will be validated or not.
+
+		Keyword Args:
+        	:arg option_validate (integer): Data type to validate. Option one is to validate that the data entered are IP addresses.
 		"""
 		while True:
 			code_form, tag_form = self.__diag.form(text = text, elements = elements, height = height, width = width, form_height = len(elements), title = title)
 			if code_form == self.__diag.OK:
 				if "" in tag_form:
-					self.createMessageDialog("\nNo form field can be empty.", 7, 50, "Error Message")
+					self.createMessageDialog("\nThere should be no empty fields in the form.", 7, 50, "Error Message")
 				else:
-					return tag_form
+					if is_data_validated:
+						if "option_validate" in kwargs:
+							if kwargs["option_validate"] == 1:
+								cont = 0
+								for tag in tag_form:
+									if self.__utils.validateDataRegex(self.ip_address_regex, tag):
+										cont += 1
+								if cont == len(elements):
+									return tag_form
+								else:
+									self.createMessageDialog("\nThe data must be IP addresses.", 7, 50, "Error Message")
+					else:
+						return tag_form
 			elif code_form == self.__diag.CANCEL:
-				self.__action_to_cancel()
+				raise KeyboardInterrupt("Exit")
 
 
 	def createYesOrNoDialog(self, text, height, width, title):
 		"""
-		Method that creates a yes/no dialog box.
+		Method that creates a yes/no box.
 		
-		Return a Dialog exit code.
+		Returns a string with the chosen option.
 
 		:arg text (string): Text to display in the box.
 		:arg height (integer): Height of the box.
 		:arg width (integer): Width of the box.
 		:arg title (string): Title to display in the box.
 		"""
-		tag_yes_or_no = self.__diag.yesno(text = text, height = height, width = width, title = title)
-		return tag_yes_or_no
+		tag_yes_no = self.__diag.yesno(text = text, height = height, width = width, title = title)
+		return tag_yes_no
 
 
 	def createScrollBoxDialog(self, text, height, width, title):
 		"""
-		Method that creates a dialog that shows a string in a scrollable box, with no line wrapping.
-		
-		Return a Dialog exit code.
+		Method that creates a scrollbox.
 
 		:arg text (string): Text to display in the box.
 		:arg height (integer): Height of the box.
