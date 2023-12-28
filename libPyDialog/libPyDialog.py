@@ -11,10 +11,10 @@ class libPyDialog:
 
 		:arg background_title (string): Title to display in the background of the box.
 		"""
-		self.__utils = libPyUtils()
-		self.__diag = Dialog(dialog = "dialog")
+		self.utils = libPyUtils()
+		self.diag = Dialog(dialog = "dialog")
 		self.integer_regex = re_compile(r'^\d+$')
-		self.__diag.set_background_title(background_title)
+		self.diag.set_background_title(background_title)
 		self.file_folder_name_regex = re_compile(r'^[^\\/?%*:|"<>]+$')
 		self.port_number_regex = re_compile(r'^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$')
 		self.ip_address_regex = re_compile(r'^(?:(?:[1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}(?:[1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^localhost$')
@@ -32,10 +32,10 @@ class libPyDialog:
 		:arg choices (tuple): Tuple with the menu options.	
 		:arg title (string): Title to display in the box.
 		"""
-		code_menu, tag_menu = self.__diag.menu(text = text, height = height, width = width, menu_height = len(choices), choices = choices, title = title)
-		if code_menu == self.__diag.OK:
+		code_menu, tag_menu = self.diag.menu(text = text, height = height, width = width, menu_height = len(choices), choices = choices, title = title)
+		if code_menu == self.diag.OK:
 			return tag_menu
-		elif code_menu == self.__diag.CANCEL:
+		elif code_menu == self.diag.CANCEL:
 			raise KeyboardInterrupt("Exit")
 
 
@@ -48,7 +48,7 @@ class libPyDialog:
 		:arg width (integer): Width of the box.
 		:arg title (string): Title to display in the box.
 		"""
-		self.__diag.msgbox(text = text, height = height, width = width, title = title)
+		self.diag.msgbox(text = text, height = height, width = width, title = title)
 
 
 	def createRadioListDialog(self, text, height, width, choices, title):
@@ -64,13 +64,13 @@ class libPyDialog:
 		:arg title (string): Title to display in the box.
 		"""
 		while True:
-			code_radiolist, tag_radiolist = self.__diag.radiolist(text = text, height = height ,width = width, list_height = len(choices), choices = choices, title = title)
-			if code_radiolist == self.__diag.OK:
+			code_radiolist, tag_radiolist = self.diag.radiolist(text = text, height = height ,width = width, list_height = len(choices), choices = choices, title = title)
+			if code_radiolist == self.diag.OK:
 				if not tag_radiolist:
 					self.createMessageDialog("\nSelect at least one option.", 7, 50, "Error Message")
 				else:
 					return tag_radiolist
-			elif code_radiolist == self.__diag.CANCEL:
+			elif code_radiolist == self.diag.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
 
@@ -87,13 +87,13 @@ class libPyDialog:
 		:arg title (string): Title to display in the box.
 		"""
 		while True:
-			code_checklist, tag_checklist = self.__diag.checklist(text = text, height = height, width = width, list_height = len(choices), choices = choices, title = title)
-			if code_checklist == self.__diag.OK:
+			code_checklist, tag_checklist = self.diag.checklist(text = text, height = height, width = width, list_height = len(choices), choices = choices, title = title)
+			if code_checklist == self.diag.OK:
 				if not tag_checklist:
 					self.createMessageDialog("\nSelect at least one option.", 7, 50, "Error Message")
 				else:
 					return tag_checklist
-			elif code_checklist == self.__diag.CANCEL:
+			elif code_checklist == self.diag.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
 	
@@ -109,13 +109,13 @@ class libPyDialog:
 		:arg init (string): Default input string.
 		"""
 		while True:
-			code_inputbox, tag_inputbox = self.__diag.inputbox(text = text, height = height, width = width, init = init)
-			if code_inputbox == self.__diag.OK:
+			code_inputbox, tag_inputbox = self.diag.inputbox(text = text, height = height, width = width, init = init)
+			if code_inputbox == self.diag.OK:
 				if not tag_inputbox:
 					self.createMessageDialog("\nInvalid data entered. Required value (not empty).", 8, 50, "Error Message")
 				else:
 					return tag_inputbox
-			elif code_inputbox == self.__diag.CANCEL:
+			elif code_inputbox == self.diag.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
 
@@ -132,13 +132,13 @@ class libPyDialog:
 		:arg insecure (boolean): If the value is True, the entered password is displayed with the character *. Otherwise the password does not appear.
 		"""
 		while True:
-			code_passwordbox, tag_passwordbox = self.__diag.passwordbox(text = text, height = height, width = width, init = init, insecure = insecure)
-			if code_passwordbox == self.__diag.OK:
+			code_passwordbox, tag_passwordbox = self.diag.passwordbox(text = text, height = height, width = width, init = init, insecure = insecure)
+			if code_passwordbox == self.diag.OK:
 				if not tag_passwordbox:
 					self.createMessageDialog("\nInvalid data entered. Required value (not empty).", 8, 50, "Error Message")
 				else:
 					return tag_passwordbox
-			elif code_passwordbox == self.__diag.CANCEL:
+			elif code_passwordbox == self.diag.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
 	
@@ -154,13 +154,13 @@ class libPyDialog:
 		:arg init (string): Default input string.
 		"""
 		while True:
-			code_inputbox, tag_inputbox = self.__diag.inputbox(text = text, height = height, width = width, init = init)
-			if code_inputbox == self.__diag.OK:
-				if(not self.__utils.validateDataRegex(self.integer_regex, tag_inputbox)):
+			code_inputbox, tag_inputbox = self.diag.inputbox(text = text, height = height, width = width, init = init)
+			if code_inputbox == self.diag.OK:
+				if(not self.utils.validateDataRegex(self.integer_regex, tag_inputbox)):
 					self.createMessageDialog("\nInvalid data entered. Required value (integer number).", 8, 50, "Error Message")
 				else:
 					return tag_inputbox
-			elif code_inputbox == self.__diag.CANCEL:
+			elif code_inputbox == self.diag.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
 	
@@ -176,13 +176,13 @@ class libPyDialog:
 		:arg init (string): Default input string.
 		"""
 		while True:
-			code_inputbox, tag_inputbox = self.__diag.inputbox(text = text, height = height, width = width, init = init)
-			if code_inputbox == self.__diag.OK:
-				if(not self.__utils.validateDataRegex(self.port_number_regex, tag_inputbox)):
+			code_inputbox, tag_inputbox = self.diag.inputbox(text = text, height = height, width = width, init = init)
+			if code_inputbox == self.diag.OK:
+				if(not self.utils.validateDataRegex(self.port_number_regex, tag_inputbox)):
 					self.createMessageDialog("\nInvalid data entered. Required value (0 - 65535).", 8, 50, "Error Message")
 				else:
 					return tag_inputbox
-			elif code_inputbox == self.__diag.CANCEL:
+			elif code_inputbox == self.diag.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
 
@@ -198,13 +198,13 @@ class libPyDialog:
 		:arg init (string): Default input string.
 		"""
 		while True:
-			code_inputbox, tag_inputbox = self.__diag.inputbox(text = text, height = height, width = width, init = init)
-			if code_inputbox == self.__diag.OK:
-				if(not self.__utils.validateDataRegex(self.file_folder_name_regex, tag_inputbox)):
+			code_inputbox, tag_inputbox = self.diag.inputbox(text = text, height = height, width = width, init = init)
+			if code_inputbox == self.diag.OK:
+				if(not self.utils.validateDataRegex(self.file_folder_name_regex, tag_inputbox)):
 					self.createMessageDialog("\nInvalid data entered. Required data (File or folder name).", 8, 50, "Error Message")
 				else:
 					return tag_inputbox
-			elif code_inputbox == self.__diag.CANCEL:
+			elif code_inputbox == self.diag.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
 
@@ -220,10 +220,10 @@ class libPyDialog:
 		:arg hour (integer): Inititial hour selected.
 		:arg minute (integer): inititial minute selected.
 		"""
-		code_timebox, tag_timebox = self.__diag.timebox(text = text, height = height, width = width, hour = hour, minute = minute, second = 00)
-		if code_timebox == self.__diag.OK:
+		code_timebox, tag_timebox = self.diag.timebox(text = text, height = height, width = width, hour = hour, minute = minute, second = 00)
+		if code_timebox == self.diag.OK:
 			return tag_timebox
-		elif code_timebox == self.__diag.CANCEL:
+		elif code_timebox == self.diag.CANCEL:
 			raise KeyboardInterrupt("Exit")
 
 
@@ -240,8 +240,8 @@ class libPyDialog:
 		:arg allowed_file_extension (string): Allowed file extension.
 		"""
 		while True:
-			code_fselect, tag_fselect = self.__diag.fselect(filepath = filepath, height = height, width = width, title = title)
-			if code_fselect == self.__diag.OK:
+			code_fselect, tag_fselect = self.diag.fselect(filepath = filepath, height = height, width = width, title = title)
+			if code_fselect == self.diag.OK:
 				if not tag_fselect:
 					self.createMessageDialog("\nSelect a file. Required value: " + allowed_file_extension + " file.", 7, 50, "Error Message")
 				elif not path.isfile(tag_fselect):
@@ -252,7 +252,7 @@ class libPyDialog:
 						self.createMessageDialog("\nSelect an allowed file. Required value: " + allowed_file_extension + " file.", 7, 50, "Error Message")
 					else:
 						return tag_fselect
-			elif code_fselect == self.__diag.CANCEL:
+			elif code_fselect == self.diag.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
 
@@ -268,13 +268,13 @@ class libPyDialog:
 		:arg title (string): Title to display in the box.
 		"""
 		while True:
-			code_dselect, tag_dselect = self.__diag.dselect(filepath = filepath, height = height, width = width, title = title)
-			if code_dselect == self.__diag.OK:
+			code_dselect, tag_dselect = self.diag.dselect(filepath = filepath, height = height, width = width, title = title)
+			if code_dselect == self.diag.OK:
 				if tag_dselect == "":
 					self.createMessageDialog("\nSelect a folder. Required value (not empty).", 7, 50, "Error Message")
 				else:
 					return tag_dselect
-			elif code_dselect == self.__diag.CANCEL:
+			elif code_dselect == self.diag.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
 	
@@ -295,8 +295,8 @@ class libPyDialog:
         	:arg option_validate (integer): Data type to validate. Option one is to validate that the data entered are IP addresses.
 		"""
 		while True:
-			code_form, tag_form = self.__diag.form(text = text, elements = elements, height = height, width = width, form_height = len(elements), title = title)
-			if code_form == self.__diag.OK:
+			code_form, tag_form = self.diag.form(text = text, elements = elements, height = height, width = width, form_height = len(elements), title = title)
+			if code_form == self.diag.OK:
 				if "" in tag_form:
 					self.createMessageDialog("\nThere should be no empty fields in the form.", 7, 50, "Error Message")
 				else:
@@ -305,7 +305,7 @@ class libPyDialog:
 							if kwargs["option_validate"] == 1:
 								cont = 0
 								for tag in tag_form:
-									if self.__utils.validateDataRegex(self.ip_address_regex, tag):
+									if self.utils.validateDataRegex(self.ip_address_regex, tag):
 										cont += 1
 								if cont == len(elements):
 									return tag_form
@@ -313,7 +313,7 @@ class libPyDialog:
 									self.createMessageDialog("\nThe data must be IP addresses.", 7, 50, "Error Message")
 					else:
 						return tag_form
-			elif code_form == self.__diag.CANCEL:
+			elif code_form == self.diag.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
 
@@ -328,7 +328,7 @@ class libPyDialog:
 		:arg width (integer): Width of the box.
 		:arg title (string): Title to display in the box.
 		"""
-		tag_yes_no = self.__diag.yesno(text = text, height = height, width = width, title = title)
+		tag_yes_no = self.diag.yesno(text = text, height = height, width = width, title = title)
 		return tag_yes_no
 
 
@@ -341,4 +341,4 @@ class libPyDialog:
 		:arg width (integer): Width of the box.
 		:arg title (string): Title to display in the box.
 		"""
-		code_scrollbox = self.__diag.scrollbox(text = text, height = height, width = width, title = title)
+		code_scrollbox = self.diag.scrollbox(text = text, height = height, width = width, title = title)
