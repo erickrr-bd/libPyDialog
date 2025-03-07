@@ -1,6 +1,8 @@
-# libPyDialog v2.1
+# libPyDialog v2.2
 
 Easy creation of graphical interfaces using PythonDialog.
+
+This project was born from the need to have a library that allows the easy creation of graphical applications in Python using dialog.
 
 For more information:
 
@@ -11,17 +13,14 @@ For more information:
 - Message box.
 - Radiolist box.
 - Checklist box.
-- Input box.
+- InputBox.
 - Password box.
-- Time box.
-- File box.
-- Folder box.
-- Form box.
+- File box (Validation of allowed extensions).
+- Form box (Validation using regular expressions).
 - Yes or No box.
 - Scroll box.
-- Input box for number integers.
-- Input box for ports.
-- Input box for file or folder names.
+- InputBox for integers (Validation using regular expressions).
+- InputBox for ports (Validation using regular expressions).
 
 # Requirements
 - Red Hat 8 or Rocky Linux 8 (Tested on Rocky Linux 8.10)
