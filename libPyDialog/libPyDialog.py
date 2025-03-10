@@ -128,8 +128,8 @@ class libPyDialog:
 				if not tag:
 					self.create_message("Invalid data. Select a file.", 7, 50, "Error Message")
 				else:
-					path_extensions = ''.join(tag.suffixes)
-					if tag.is_file() and path_extensions in extensions_list:
+					path_extensions = ''.join(Path(tag).suffixes)
+					if Path(tag).is_file() and path_extensions in extensions_list:
 						return tag
 					else:
 						self.create_message("\nInvalida data. File extension not allowed.", 7, 50, "Error Message")
