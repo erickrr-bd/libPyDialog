@@ -4,9 +4,9 @@ Email: erodriguez@tekium.mx, erickrr.tbd93@gmail.com
 GitHub: https://github.com/erickrr-bd/libPyDialog
 libPyDialog v2.2 - March 2025
 """
-from re import compile
 from pathlib import Path
 from dialog import Dialog
+from re import compile, match
 from libPyUtils import libPyUtils
 from dataclasses import dataclass
 
@@ -76,7 +76,7 @@ class libPyDialog:
 			is_validate (bool): Option that indicates whether the entered data is validated or not.
 
 		Keyword Args:
-			validation_type (int): Validation type (Option one - IP address, hostname, domain name)
+			validation_type (int): Validation type (Option 1 - IP address, hostname, domain name, Option 2 - URL)
 
 		Returns:
 			tag (list): List with the data entered in the form.
@@ -90,18 +90,23 @@ class libPyDialog:
 				else:
 					if is_validate:
 						if "validation_type" in kwargs:
+							cont = 0
 							match kwargs["validation_type"]:
 								case 1:
-									cont = 0
 									domain_name_regex = compile(r'^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$')
 									ip_regex = compile(r'^(?:(?:[1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}(?:[1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^localhost$')
 									for data in tag:
 										if utils.validate_data_regex(data, ip_regex) or utils.validate_data_regex(data, domain_name_regex):
 											cont += 1
-									if cont == len(elements):
-										return tag
-									else:
-										self.create_message("\nInvalid data. Required value (IP address, hostname or domain name).", 8, 50, "Error Message")
+								case 2:
+									url_regex = "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$"
+									for data in tag:
+										if match(url_regex, data):
+											cont += 1		
+							if cont == len(elements):
+								return tag
+							else:
+								self.create_message("\nInvalid data. Required value (IP address, hostname, domain name or URL).", 8, 50, "Error Message")
 					else:
 						return tag
 			elif code == self.python_dialog.CANCEL:
@@ -257,6 +262,32 @@ class libPyDialog:
 				port_regex = compile(r'^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$')
 				if not utils.validate_data_regex(tag, port_regex):
 					self.create_message("\nInvalid data. Required value (Port number).", 7, 50, "Error Message")
+				else:
+					return tag
+			elif code == self.python_dialog.CANCEL:
+				raise KeyboardInterrupt("Exit")
+
+
+	def create_filename_inputbox(self, text: str, height: int, width: int, init: str) -> str:
+		"""
+		Method that creates an inputbox for entering a file name. 
+
+		Parameters:
+			text (str): Text to display in the box.
+			height (int): Height of the box.
+			width (int): Width of the box.
+			init (str): Default input string.
+
+		Returns:
+			tag (str): File name entered.
+		"""
+		utils = libPyUtils()
+		while True:
+			code, tag = self.python_dialog.inputbox(text = text, height = height, width = width, init = init)
+			if code == self.python_dialog.OK:
+				file_name_regex = compile(r'^[^\\/?%*:|"<>]+$')
+				if not utils.validate_data_regex(tag, file_name_regex):
+					self.create_message("\nInvalid data. Required value (File name).", 7, 50, "Error Message")
 				else:
 					return tag
 			elif code == self.python_dialog.CANCEL:
