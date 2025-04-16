@@ -294,6 +294,37 @@ class libPyDialog:
 				raise KeyboardInterrupt("Exit")
 
 
+	def create_url_inputbox(self, text: str, height: int, width: int, init: str) -> str:
+		"""
+		Method that creates an inputbox for entering a URL. 
+
+		Parameters:
+			text (str): Text to display in the box.
+			height (int): Height of the box.
+			width (int): Width of the box.
+			init (str): Default input string.
+
+		Returns:
+			tag (str): URL entered.
+		"""
+		while True:
+			code, tag = self.python_dialog.inputbox(text = text, height = height, width = width, init = init)
+			if code == self.python_dialog.OK:
+				if not tag:
+					self.create_message("\nInvalid data. Required value (non-empty fields).", 8, 50, "Error Message")
+				else:
+					if len(tag) > 50:
+						self.create_message("\nInvalid data. Exceeded size (maximum 50 characters).", 8, 50, "Error Message")
+					else:
+						url_regex = "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$"
+						if match(url_regex, tag):
+							return tag
+						else:
+							self.create_message("\nInvalid data. Required value (URL).", 7, 50, "Error Message")
+			elif code == self.python_dialog.CANCEL:
+				raise KeyboardInterrupt("Exit")
+
+
 	def create_passwordbox(self, text: str, height: int, width: int, init: str, insecure_mode: bool) -> str:
 		"""
 		Method that creates an inputbox of type password.
