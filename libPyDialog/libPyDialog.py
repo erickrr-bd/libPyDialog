@@ -110,7 +110,7 @@ class libPyDialog:
 							if cont == len(elements):
 								return tag
 							else:
-								self.create_message("\nInvalid data. Required value (IP address, hostname, domain name or URL).", 8, 50, "Error Message")
+								self.create_message("\nInvalid data. Required value (IP address, hostname, domain name, URL or Index Pattern).", 8, 50, "Error Message")
 					else:
 						return tag
 			elif code == self.python_dialog.CANCEL:
@@ -354,6 +354,27 @@ class libPyDialog:
 				raise KeyboardInterrupt("Exit")
 
 
+	def create_time(self, text: str, height: int, width: int, hour: int, minute: int) -> list:
+		"""
+		Method that creates a timebox.
+
+		Parameters:
+			text (str): Text to display in the box.
+			height (int): Height of the box.
+			width (int): Width of the box.
+			hour (int): Default hour.
+			minute (int): Default minute.
+
+		Returns:
+			tag (list): Selected time.
+		"""
+		code, tag = self.python_dialog.timebox(text = text, height = height, width = width, hour = hour, minute = minute, second = 00)
+		if code == self.python_dialog.OK:
+			return tag
+		elif code == self.python_dialog.CANCEL:
+			raise KeyboardInterrupt("Exit")
+
+
 	def create_yes_or_no(self, text: str, height: int, width: int, title: str) -> str:
 		"""
 		Method that creates a yes/no box.
@@ -382,3 +403,4 @@ class libPyDialog:
 			title (str): Title to display in the box.
 		"""
 		code = self.python_dialog.scrollbox(text = text, height = height, width = width, title = title)
+		
