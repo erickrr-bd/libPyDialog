@@ -99,7 +99,7 @@ class libPyDialog:
 										if utils.validate_data_regex(data, ip_regex) or utils.validate_data_regex(data, domain_name_regex):
 											cont += 1
 								case 2:
-									url_regex = "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$"
+									url_regex = r'https?://(?:[a-zA-Z0-9.-]+|\d{1,3}(?:\.\d{1,3}){3}):\d+'
 									for data in tag:
 										if match(url_regex, data):
 											cont += 1		
