@@ -2,7 +2,8 @@
 Author: Erick Roberto Rodriguez Rodriguez
 Email: erodriguez@tekium.mx, erickrr.tbd93@gmail.com
 GitHub: https://github.com/erickrr-bd/libPyDialog
-libPyDialog v2.2 - March 2025
+libPyDialog v2.2 - August 2025
+Easy creation of graphical interfaces using PythonDialog. 
 """
 from pathlib import Path
 from dialog import Dialog
@@ -12,9 +13,7 @@ from dataclasses import dataclass
 
 @dataclass
 class libPyDialog:
-	"""
-	Easy creation of graphical interfaces using PythonDialog. 
-	"""
+
 	python_dialog: Dialog
 
 	def __init__(self, backtitle: str):
@@ -76,7 +75,7 @@ class libPyDialog:
 			is_validate (bool): Option that indicates whether the entered data is validated or not.
 
 		Keyword Args:
-			validation_type (int): Validation type (Option 1 - IP address, hostname, domain name, Option 2 - URL)
+			validation_type (int): Validation type (Option 1 - IP address, hostname, domain name, Option 2 - URL, Option 3 - Index Pattern)
 
 		Returns:
 			tag (list): List with the data entered in the form.
@@ -102,6 +101,11 @@ class libPyDialog:
 									url_regex = r'https?://(?:[a-zA-Z0-9.-]+|\d{1,3}(?:\.\d{1,3}){3}):\d+'
 									for data in tag:
 										if match(url_regex, data):
+											cont += 1
+								case 3:
+									index_pattern_regex = r'^([a-zA-Z0-9_-]+-)+\*$'
+									for data in tag:
+										if match(index_pattern_regex, data):
 											cont += 1		
 							if cont == len(elements):
 								return tag
