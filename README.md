@@ -5,7 +5,7 @@ Python library that extends the capabilities to create TUI (Text User Interface)
 It incorporates integrated validations to ensure the quality and consistency of the data entered by the user, facilitating the development of interactive, secure and modular applications.
 
 ## Features
-- Based on [`pythondialog`](https://pythondialog.sourceforge.net/)
+- Based on [pythondialog](https://pythondialog.sourceforge.net/)
 - Automatic validation of entries (numbers, emails, dates, IP addresses, URLs, etc.)
 - Modular and easy to integrate into CLI scripts
 - Compatible with Linux systems and POSIX environments
@@ -17,7 +17,7 @@ It incorporates integrated validations to ensure the quality and consistency of 
 - Python 3.12
 - Python Libraries
   - pythondialog
-  - [libPyUtils](https://github.com/erickrr-bd/libPyUtils)
+  - [libPyUtils v2.2](https://github.com/erickrr-bd/libPyUtils)
 
 ## Dialog Installation
 
