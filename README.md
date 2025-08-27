@@ -1,6 +1,6 @@
 # libPyDialog v2.2
 
-Python library that extends the capabilities to create TUI (Text User Interface) type graphical interfaces in console environments.
+Python library that enhances the use of pythondialog to build TUI-type graphical interfaces on terminals.
 
 It incorporates integrated validations to ensure the quality and consistency of the data entered by the user, facilitating the development of interactive, secure and modular applications.
 
