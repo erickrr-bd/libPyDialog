@@ -37,4 +37,4 @@ Copy the "libPyDialog" folder to the following path:
 
 ## Documentation
 
-See the project wiki for advanced examples, integration with Bash scripts, and theme customization.
+See the project [wiki](https://github.com/erickrr-bd/libPyDialog/wiki) for advanced examples, integration with Bash scripts, and theme customization.
