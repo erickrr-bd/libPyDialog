@@ -135,13 +135,37 @@ class libPyDialog:
 			code, tag = self.python_dialog.fselect(filepath = filepath, height = height, width = width, title = title)
 			if code == self.python_dialog.OK:
 				if not tag:
-					self.create_message("Invalid data. Select a file.", 7, 50, "Error Message")
+					self.create_message("\nInvalid data. Select a file.", 7, 50, "Error Message")
 				else:
 					path_extensions = ''.join(Path(tag).suffixes)
 					if Path(tag).is_file() and path_extensions in extensions_list:
 						return tag
 					else:
 						self.create_message("\nInvalida data. File extension not allowed.", 7, 50, "Error Message")
+			elif code == self.python_dialog.CANCEL:
+				raise KeyboardInterrupt("Exit")
+
+
+	def select_directory(self, filepath: str, height: int, width: int, title: str) -> str:
+		"""
+		Method that creates a directory selection box.
+
+		Parameters:
+			filepath (str): Initial path.
+			height (int): Height of the box.
+			width (int): Width of the box.
+			title (str): Title to display in the box.
+
+		Returns:
+			tag (str): Selected directory.
+		"""
+		while True:
+			code, tag = self.python_dialog.dselect(filepath = filepath, height = height, width = width, title = title)
+			if code == self.python_dialog.OK:
+				if not tag:
+					self.create_message("\nInvalid data. Select a directory.", 7, 50, "Error Message")
+				else:
+					return tag
 			elif code == self.python_dialog.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
