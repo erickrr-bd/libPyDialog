@@ -2,8 +2,8 @@
 Author: Erick Roberto Rodriguez Rodriguez
 Email: erodriguez@tekium.mx, erickrr.tbd93@gmail.com
 GitHub: https://github.com/erickrr-bd/libPyDialog
-libPyDialog v2.2 - August 2025
-Easy creation of graphical interfaces using PythonDialog. 
+libPyDialog v2.3 - March 2026
+Python library that enhances the use of pythondialog to build TUI-type graphical interfaces on terminals.
 """
 from pathlib import Path
 from dialog import Dialog
@@ -57,12 +57,46 @@ class libPyDialog:
 		"""
 		code, tag = self.python_dialog.menu(text = text, height = height, width = width, menu_height = len(choices), choices = choices, title = title)
 		if code == self.python_dialog.OK:
-			return tag
+			valid_tags = {c[0] for c in choices}
+			if tag not in valid_tags:
+				self.create_message("\nThe selected value is invalid.", 7, 50, "Error Message")
+			else:
+				return tag
 		elif code == self.python_dialog.CANCEL:
 			raise KeyboardInterrupt("Exit")
 
 
-	def create_form(self, text: str, elements: tuple, height: int, width: int, title: str, is_validate: bool, **kwargs) -> list:
+	def create_form(self, text: str, elements: tuple, height: int, width: int, title: str) -> list:
+		"""
+		Method that creates a form.
+
+		Parameters:
+			text (str): Text to display in the box.
+			elements (tuple): Sequence describing the labels and fields.
+			height (int): Height of the box.
+			width (int): Width of the box.
+			title (str): Title to display in the box.
+
+		Returns:
+			tag (list): List with the data entered in the form.
+		"""
+		while True:
+			code, tag = self.python_dialog.form(text = text, elements = elements, height = height, width = width, form_height = len(elements), title = title)
+			if code == self.python_dialog.OK:
+				for value in tag:
+					if value.strip() == "":
+						self.create_message("\nInvalid data. Required value (non-empty fields).", 8, 50, "Error Message")
+						break
+					if len(value) > 100:
+						self.create_message("\nInvalid data. Size exceeded (100 characters).", 8, 50, "Error Message")
+						break
+				else:
+					return tag
+			elif code == self.python_dialog.CANCEL:
+				raise KeyboardInterrupt("Exit")
+
+
+	def create_form_bck(self, text: str, elements: tuple, height: int, width: int, title: str, is_validate: bool, **kwargs) -> list:
 		"""
 		Method that creates a form.
 
@@ -187,8 +221,11 @@ class libPyDialog:
 		while True:
 			code, tag = self.python_dialog.radiolist(text = text, height = height, width = width, list_height = len(choices), choices = choices, title = title)
 			if code == self.python_dialog.OK:
+				valid_tags = {c[0] for c in choices}
 				if not tag:
 					self.create_message("\nSelect at least one option.", 7, 50, "Error Message")
+				elif tag not in valid_tags:
+					self.create_message("\nThe selected value is invalid.", 7, 50, "Error Message")
 				else:
 					return tag
 			elif code == self.python_dialog.CANCEL:
@@ -214,6 +251,8 @@ class libPyDialog:
 			if code == self.python_dialog.OK:
 				if not tag:
 					self.create_message("\nSelect at least one option.", 7, 50, "Error Message")
+				elif all(t in choices for t in tag):
+					self.create_message("\nThe selected value(s) are invalid.", 7, 50, "Error Message")
 				else:
 					return tag
 			elif code == self.python_dialog.CANCEL:
@@ -231,13 +270,15 @@ class libPyDialog:
 			init (str): Default input string.
 
 		Returns:
-			tag (str): Data entered.
+			tag (str): Text entered.
 		"""
 		while True:
 			code, tag = self.python_dialog.inputbox(text = text, height = height, width = width, init = init)
 			if code == self.python_dialog.OK:
 				if not tag:
 					self.create_message("\nInvalid data. Required value (non-empty fields).", 8, 50, "Error Message")
+				elif len(tag) > 100:
+					self.create_message("\nInvalid data. Size exceeded (100 characters).", 7, 50, "Error Message")
 				else:
 					return tag
 			elif code == self.python_dialog.CANCEL:
@@ -261,9 +302,11 @@ class libPyDialog:
 		while True:
 			code, tag = self.python_dialog.inputbox(text = text, height = height, width = width, init = init)
 			if code == self.python_dialog.OK:
-				number_regex = compile(r'^\d+$')
-				if not utils.validate_data_regex(tag, number_regex):
+				int_regex = compile(r'^\d+$')
+				if not utils.validate_data_regex(tag, int_regex):
 					self.create_message("\nInvalid data. Required value (Integer number).", 7, 50, "Error Message")
+				elif len(tag) > 10:
+					self.create_message("\nInvalid data. Size exceeded (10 characters).", 7, 50, "Error Message")
 				else:
 					return tag
 			elif code == self.python_dialog.CANCEL:
@@ -394,7 +437,16 @@ class libPyDialog:
 		"""
 		code, tag = self.python_dialog.timebox(text = text, height = height, width = width, hour = hour, minute = minute, second = 00)
 		if code == self.python_dialog.OK:
-			return tag
+			if not isinstance(tag, list) or len(tag) != 3:
+				self.create_message("\nInvalid time format.", 7, 50, "Error Message")
+			else:
+				h, m, s = tag
+				if not (0 <= h <= 23):
+					self.create_message("\nInvalid hour. Must be 0–23.", 7, 50, "Error Message")
+				elif not (0 <= m <= 59):
+					self.create_message("\nInvalid minute. Must be 0–59.", 7, 50, "Error Message")
+				else:
+					return tag
 		elif code == self.python_dialog.CANCEL:
 			raise KeyboardInterrupt("Exit")
 
