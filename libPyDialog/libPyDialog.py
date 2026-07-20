@@ -2,7 +2,7 @@
 Author: Erick Roberto Rodriguez Rodriguez
 Email: erodriguez@tekium.mx, erickrr.tbd93@gmail.com
 GitHub: https://github.com/erickrr-bd/libPyDialog
-libPyDialog v2.3 - March 2026
+libPyDialog v2.3.1 - July 2026
 Python library that enhances the use of pythondialog to build TUI-type graphical interfaces on terminals.
 """
 from pathlib import Path
@@ -57,11 +57,7 @@ class libPyDialog:
 		"""
 		code, tag = self.python_dialog.menu(text = text, height = height, width = width, menu_height = len(choices), choices = choices, title = title)
 		if code == self.python_dialog.OK:
-			valid_tags = {c[0] for c in choices}
-			if tag not in valid_tags:
-				self.create_message("\nThe selected value is invalid.", 7, 50, "Error Message")
-			else:
-				return tag
+			return tag
 		elif code == self.python_dialog.CANCEL:
 			raise KeyboardInterrupt("Exit")
 
@@ -83,22 +79,25 @@ class libPyDialog:
 		while True:
 			code, tag = self.python_dialog.form(text = text, elements = elements, height = height, width = width, form_height = len(elements), title = title)
 			if code == self.python_dialog.OK:
+				is_valid = True
 				for value in tag:
 					if value.strip() == "":
 						self.create_message("\nInvalid data. Required value (non-empty fields).", 8, 50, "Error Message")
+						is_valid = False
 						break
 					if len(value) > 100:
 						self.create_message("\nInvalid data. Size exceeded (100 characters).", 8, 50, "Error Message")
+						is_valid = False
 						break
-				else:
+				if is_valid:
 					return tag
 			elif code == self.python_dialog.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
 
-	def create_form_bck(self, text: str, elements: tuple, height: int, width: int, title: str, is_validate: bool, **kwargs) -> list:
+	def create_url_form(self, text: str, elements: tuple, height: int, width: int, title: str) -> list:
 		"""
-		Method that creates a form.
+		Method that creates a form to enter URLs (URL:PORT format).
 
 		Parameters:
 			text (str): Text to display in the box.
@@ -106,47 +105,31 @@ class libPyDialog:
 			height (int): Height of the box.
 			width (int): Width of the box.
 			title (str): Title to display in the box.
-			is_validate (bool): Option that indicates whether the entered data is validated or not.
-
-		Keyword Args:
-			validation_type (int): Validation type (Option 1 - IP address, hostname, domain name, Option 2 - URL, Option 3 - Index Pattern)
 
 		Returns:
 			tag (list): List with the data entered in the form.
 		"""
-		utils = libPyUtils()
+		url_regex = r'https?://(?:[a-zA-Z0-9.-]+|\d{1,3}(?:\.\d{1,3}){3}):\d+'
+
 		while True:
 			code, tag = self.python_dialog.form(text = text, elements = elements, height = height, width = width, form_height = len(elements), title = title)
 			if code == self.python_dialog.OK:
-				if "" in tag:
-					self.create_message("\nInvalid data. Required value (non-empty fields).", 8, 50, "Error Message")
-				else:
-					if is_validate:
-						if "validation_type" in kwargs:
-							cont = 0
-							match kwargs["validation_type"]:
-								case 1:
-									domain_name_regex = compile(r'^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$')
-									ip_regex = compile(r'^(?:(?:[1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}(?:[1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^localhost$')
-									for data in tag:
-										if utils.validate_data_regex(data, ip_regex) or utils.validate_data_regex(data, domain_name_regex):
-											cont += 1
-								case 2:
-									url_regex = r'https?://(?:[a-zA-Z0-9.-]+|\d{1,3}(?:\.\d{1,3}){3}):\d+'
-									for data in tag:
-										if match(url_regex, data):
-											cont += 1
-								case 3:
-									index_pattern_regex = r'^([a-zA-Z0-9_-]+-)+\*$'
-									for data in tag:
-										if match(index_pattern_regex, data):
-											cont += 1		
-							if cont == len(elements):
-								return tag
-							else:
-								self.create_message("\nInvalid data. Required value (IP address, hostname, domain name, URL or Index Pattern).", 8, 50, "Error Message")
-					else:
-						return tag
+				is_valid = True
+				for value in tag:
+					if value.strip() == "":
+						self.create_message("\nInvalid data. Required value (non-empty fields).", 8, 50, "Error Message")
+						is_valid = False
+						break
+					if len(value) > 100:
+						self.create_message("\nInvalid data. Size exceeded (100 characters).", 8, 50, "Error Message")
+						is_valid = False
+						break
+					if not match(url_regex, value):
+						self.create_message("\nInvalid data. Required value (URL).", 7, 50, "Error Message")
+						is_valid = False
+						break
+				if is_valid:
+					return tag
 			elif code == self.python_dialog.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
@@ -170,12 +153,19 @@ class libPyDialog:
 			if code == self.python_dialog.OK:
 				if not tag:
 					self.create_message("\nInvalid data. Select a file.", 7, 50, "Error Message")
-				else:
-					path_extensions = ''.join(Path(tag).suffixes)
-					if Path(tag).is_file() and path_extensions in extensions_list:
+					continue
+				chosen_path = Path(tag)
+				if chosen_path.is_dir():
+					filepath = str(chosen_path) + '/'
+					continue
+				if chosen_path.is_file():
+					path_extensions = ''.join(chosen_path.suffixes)
+					if path_extensions in extensions_list:
 						return tag
 					else:
-						self.create_message("\nInvalida data. File extension not allowed.", 7, 50, "Error Message")
+						self.create_message("\nInvalid data. File extension not allowed.", 7, 50, "Error Message")
+				else:
+					self.create_message("\nInvalid data. Select a file.", 7, 50, "Error Message")
 			elif code == self.python_dialog.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
@@ -198,8 +188,12 @@ class libPyDialog:
 			if code == self.python_dialog.OK:
 				if not tag:
 					self.create_message("\nInvalid data. Select a directory.", 7, 50, "Error Message")
-				else:
+					continue
+				chosen_path = Path(tag)
+				if chosen_path.is_dir():
 					return tag
+				else:
+					self.create_message("\nInvalid data. The directory doesn't exist.", 8, 50, "Error Message")
 			elif code == self.python_dialog.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
@@ -222,12 +216,9 @@ class libPyDialog:
 			code, tag = self.python_dialog.radiolist(text = text, height = height, width = width, list_height = len(choices), choices = choices, title = title)
 			if code == self.python_dialog.OK:
 				valid_tags = {c[0] for c in choices}
-				if not tag:
-					self.create_message("\nSelect at least one option.", 7, 50, "Error Message")
-				elif tag not in valid_tags:
-					self.create_message("\nThe selected value is invalid.", 7, 50, "Error Message")
-				else:
+				if tag in valid_tags:
 					return tag
+				self.create_message("\nSelect at least one option.", 7, 50, "Error Message")
 			elif code == self.python_dialog.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
@@ -251,10 +242,12 @@ class libPyDialog:
 			if code == self.python_dialog.OK:
 				if not tag:
 					self.create_message("\nSelect at least one option.", 7, 50, "Error Message")
-				elif all(t in choices for t in tag):
-					self.create_message("\nThe selected value(s) are invalid.", 7, 50, "Error Message")
+					continue
+				valid_tags = {c[0] for c in choices}
+				if all(t in valid_tags for t in tag):
+					return tag 
 				else:
-					return tag
+					self.create_message("\nThe selected value(s) are invalid.", 7, 50, "Error Message")
 			elif code == self.python_dialog.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
@@ -275,7 +268,7 @@ class libPyDialog:
 		while True:
 			code, tag = self.python_dialog.inputbox(text = text, height = height, width = width, init = init)
 			if code == self.python_dialog.OK:
-				if not tag:
+				if not tag.strip():
 					self.create_message("\nInvalid data. Required value (non-empty fields).", 8, 50, "Error Message")
 				elif len(tag) > 100:
 					self.create_message("\nInvalid data. Size exceeded (100 characters).", 7, 50, "Error Message")
@@ -285,7 +278,7 @@ class libPyDialog:
 				raise KeyboardInterrupt("Exit")
 
 
-	def create_integer_inputbox(self, text: str, height: int, width: int, init: str) -> str:
+	def create_integer_inputbox(self, text: str, height: int, width: int, init: str) -> int:
 		"""
 		Method that creates an inputbox for entering integers. 
 
@@ -296,16 +289,17 @@ class libPyDialog:
 			init (str): Default input string.
 
 		Returns:
-			tag (str): Integer entered.
+			tag (int): Integer entered.
 		"""
 		utils = libPyUtils()
+		int_regex = compile(r'^\d+$')
+
 		while True:
 			code, tag = self.python_dialog.inputbox(text = text, height = height, width = width, init = init)
 			if code == self.python_dialog.OK:
-				int_regex = compile(r'^\d+$')
-				if not utils.validate_data_regex(tag, int_regex):
+				if not utils.validate_data_regex(tag.strip(), int_regex):
 					self.create_message("\nInvalid data. Required value (Integer number).", 7, 50, "Error Message")
-				elif len(tag) > 10:
+				elif len(tag.strip()) > 10:
 					self.create_message("\nInvalid data. Size exceeded (10 characters).", 7, 50, "Error Message")
 				else:
 					return tag
@@ -327,11 +321,12 @@ class libPyDialog:
 			tag (str): Port entered.
 		"""
 		utils = libPyUtils()
+		port_regex = compile(r'^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$')
+		
 		while True:
 			code, tag = self.python_dialog.inputbox(text = text, height = height, width = width, init = init)
-			if code == self.python_dialog.OK:
-				port_regex = compile(r'^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$')
-				if not utils.validate_data_regex(tag, port_regex):
+			if code == self.python_dialog.OK:			
+				if not utils.validate_data_regex(tag.strip(), port_regex):
 					self.create_message("\nInvalid data. Required value (Port number).", 7, 50, "Error Message")
 				else:
 					return tag
@@ -353,11 +348,12 @@ class libPyDialog:
 			tag (str): File name entered.
 		"""
 		utils = libPyUtils()
+		file_name_regex = compile(r'^[^\\/?%*:|"<>]+$')
+
 		while True:
 			code, tag = self.python_dialog.inputbox(text = text, height = height, width = width, init = init)
 			if code == self.python_dialog.OK:
-				file_name_regex = compile(r'^[^\\/?%*:|"<>]+$')
-				if not utils.validate_data_regex(tag, file_name_regex):
+				if not utils.validate_data_regex(tag.strip(), file_name_regex):
 					self.create_message("\nInvalid data. Required value (File name).", 7, 50, "Error Message")
 				else:
 					return tag
@@ -378,20 +374,21 @@ class libPyDialog:
 		Returns:
 			tag (str): URL entered.
 		"""
+		url_regex = "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$"
+
 		while True:
 			code, tag = self.python_dialog.inputbox(text = text, height = height, width = width, init = init)
 			if code == self.python_dialog.OK:
-				if not tag:
+				if not tag.strip():
 					self.create_message("\nInvalid data. Required value (non-empty fields).", 8, 50, "Error Message")
+					continue
+				if len(tag.strip()) > 50:
+					self.create_message("\nInvalid data. Exceeded size (maximum 50 characters).", 8, 50, "Error Message")
+					continue
+				if url_regex.match(tag.strip()):
+					return tag
 				else:
-					if len(tag) > 50:
-						self.create_message("\nInvalid data. Exceeded size (maximum 50 characters).", 8, 50, "Error Message")
-					else:
-						url_regex = "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$"
-						if match(url_regex, tag):
-							return tag
-						else:
-							self.create_message("\nInvalid data. Required value (URL).", 7, 50, "Error Message")
+					self.create_message("\nInvalid data. Required value (URL).", 8, 50, "Error Message")
 			elif code == self.python_dialog.CANCEL:
 				raise KeyboardInterrupt("Exit")
 
@@ -413,7 +410,7 @@ class libPyDialog:
 		while True:
 			code, tag = self.python_dialog.passwordbox(text = text, height = height, width = width, init = init, insecure = insecure_mode)
 			if code == self.python_dialog.OK:
-				if not tag:
+				if not tag or not tag.strip():
 					self.create_message("\nInvalid data. Required value (non-empty fields).", 8, 50, "Error Message")
 				else:
 					return tag
@@ -435,18 +432,12 @@ class libPyDialog:
 		Returns:
 			tag (list): Selected time.
 		"""
-		code, tag = self.python_dialog.timebox(text = text, height = height, width = width, hour = hour, minute = minute, second = 00)
+		code, tag = self.python_dialog.timebox(text = text, height = height, width = width, hour = hour, minute = minute, second = 0)
 		if code == self.python_dialog.OK:
-			if not isinstance(tag, list) or len(tag) != 3:
-				self.create_message("\nInvalid time format.", 7, 50, "Error Message")
+			if tag and len(tag) == 3:
+				return tag
 			else:
-				h, m, s = tag
-				if not (0 <= h <= 23):
-					self.create_message("\nInvalid hour. Must be 0–23.", 7, 50, "Error Message")
-				elif not (0 <= m <= 59):
-					self.create_message("\nInvalid minute. Must be 0–59.", 7, 50, "Error Message")
-				else:
-					return tag
+				self.create_message("\nInvalid time format.", 7, 50, "Error Message")
 		elif code == self.python_dialog.CANCEL:
 			raise KeyboardInterrupt("Exit")
 
@@ -465,7 +456,8 @@ class libPyDialog:
 			tag (str): Chosen option.
 		"""
 		tag = self.python_dialog.yesno(text = text, height = height, width = width, title = title)
-		return tag
+		value = tag == "ok"
+		return value
 
 
 	def create_scrollbox(self, text: str, height: int, width: int, title: str) -> None:
@@ -479,4 +471,5 @@ class libPyDialog:
 			title (str): Title to display in the box.
 		"""
 		code = self.python_dialog.scrollbox(text = text, height = height, width = width, title = title)
-		
+		if code == self.python_dialog.ESC:
+			raise KeyboardInterrupt("Exit")
