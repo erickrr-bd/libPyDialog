@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 HERE = Path(__file__).parent
 
-VERSION = '2.3.1'
+VERSION = '2.4.0'
 PACKAGE_NAME = 'libPyDialog' 
 AUTHOR = 'Erick Roberto Rodríguez Rodriguez'
 AUTHOR_EMAIL = 'erickrr.tbd93@gmail.com, erodriguez@tekium.mx' 
